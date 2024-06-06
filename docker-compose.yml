@@ -1,0 +1,31 @@
+version: '3.11'
+
+services:
+
+  db:
+    image: postgres:12
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+    env_file:
+      - ./.env
+    ports:
+      - '5432:5432'
+
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - ./src/:/app/
+    env_file:
+      - ./.env
+    tty: true
+    links:
+      - 'db'
+    depends_on:
+      - db
+    ports:
+      - '8000:8000'
+
+volumes:
+  postgres_data:
